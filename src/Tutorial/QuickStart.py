@@ -105,7 +105,38 @@ def main():
         test(test_dataloader, model, loss_fn)
     print("Done!")
 
+    torch.save(model.state_dict(), "model.pth")
+    print("Saved the pytorch model to the file model.pth")
 
+    model = NeuralNetwork.to(device)
+    model.load_state_dict(torch.load("model.pth"))
 
+    classes = [
+        "T-shirt/top",
+        "Trouser",
+        "Pullover",
+        "Dress",
+        "Coat",
+        "Sandal",
+        "Shirt",
+        "Sneaker",
+        "Bag",
+        "Ankle boot"
+    ]
+
+    model.eval()
+    x, y = test_data[0][0], test_data[0][1]
+    with torch.no_grad():
+        x = x.to(device)
+        prediction = model(x)
+        predicted, actual = classes[prediction[0].argmax(0)], classes[y]
+        print(f'Predicted: "{predicted}" Actual: "{actual}"')
+
+# TODO
+# Explain/learn meaning of the following statements/snippets:
+# .to(device)
+# with torch.no_grad()
+# how did it determine I had a CUDA gpu?
+# what is mps?
 if __name__ == "__main__":
     main()
